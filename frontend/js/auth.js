@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initLoginForm();
   initRegisterForm();
-  initDemoButtons();
   initPasswordToggle();
 });
 
@@ -21,30 +20,6 @@ function initPasswordToggle() {
       const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
       passwordInput.setAttribute('type', type);
       toggleBtn.innerHTML = type === 'password' ? '<i class="bi bi-eye"></i>' : '<i class="bi bi-eye-slash"></i>';
-    });
-  }
-}
-
-// Quick demo credential filling
-function initDemoButtons() {
-  const fillUserBtn = document.getElementById('fillDemoUserBtn');
-  const fillAdminBtn = document.getElementById('fillDemoAdminBtn');
-  const emailInput = document.getElementById('loginEmail');
-  const passwordInput = document.getElementById('loginPassword');
-
-  if (fillUserBtn && emailInput && passwordInput) {
-    fillUserBtn.addEventListener('click', () => {
-      emailInput.value = 'john@example.com';
-      passwordInput.value = 'UserPassword123!';
-      showToast('Demo Student credentials entered', 'info');
-    });
-  }
-
-  if (fillAdminBtn && emailInput && passwordInput) {
-    fillAdminBtn.addEventListener('click', () => {
-      emailInput.value = 'admin@quizsystem.com';
-      passwordInput.value = 'AdminPassword123!';
-      showToast('Administrator credentials entered', 'info');
     });
   }
 }
