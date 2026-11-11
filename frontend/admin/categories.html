@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Category Management - Admin Console</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <!-- Custom Design System -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-light">
+
+  <!-- Dynamic Navigation Bar -->
+  <div id="main-navbar-container"></div>
+
+  <!-- Admin Dashboard Wrapper -->
+  <div class="dashboard-wrapper">
+    <!-- Admin Sidebar -->
+    <aside class="dashboard-sidebar">
+      <div class="d-flex align-items-center gap-3 px-2 py-3 mb-4 border-bottom">
+        <div class="brand-icon" style="width: 44px; height: 44px; font-size: 1.25rem;">
+          <i class="bi bi-shield-lock-fill"></i>
+        </div>
+        <div class="overflow-hidden">
+          <div class="fw-bold text-dark text-truncate" id="adminSidebarName">Administrator</div>
+          <span class="badge bg-danger small">System Admin</span>
+        </div>
+      </div>
+      <ul class="sidebar-menu">
+        <li>
+          <a href="/admin/dashboard.html" class="sidebar-link">
+            <i class="bi bi-speedometer2"></i> Overview
+          </a>
+        </li>
+        <li>
+          <a href="/admin/categories.html" class="sidebar-link active">
+            <i class="bi bi-grid-fill"></i> Categories
+          </a>
+        </li>
+        <li>
+          <a href="/admin/questions.html" class="sidebar-link">
+            <i class="bi bi-question-diamond-fill"></i> Questions
+          </a>
+        </li>
+        <li>
+          <a href="/admin/users.html" class="sidebar-link">
+            <i class="bi bi-people-fill"></i> User Management
+          </a>
+        </li>
+        <li>
+          <a href="/admin/results.html" class="sidebar-link">
+            <i class="bi bi-bar-chart-line-fill"></i> Quiz Results
+          </a>
+        </li>
+        <li class="mt-4 pt-3 border-top">
+          <a href="/dashboard.html" class="sidebar-link">
+            <i class="bi bi-arrow-left-circle"></i> Student Portal
+          </a>
+        </li>
+        <li>
+          <a href="javascript:void(0)" onclick="logout()" class="sidebar-link text-danger">
+            <i class="bi bi-box-arrow-right text-danger"></i> Sign Out
+          </a>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Admin Main Content -->
+    <main class="dashboard-main">
+      <div class="container-fluid p-0">
+        
+        <!-- Header -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+          <div>
+            <h2 class="fw-bold mb-1">Quiz Categories</h2>
+            <p class="text-muted small mb-0">Create, configure, activate, deactivate, or safely remove quiz subjects.</p>
+          </div>
+          <button class="btn btn-primary" onclick="openCreateCategoryModal()">
+            <i class="bi bi-plus-lg me-1"></i> Add New Category
+          </button>
+        </div>
+
+        <!-- Categories Table Card -->
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-white py-3">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+              <h5 class="fw-bold mb-0 text-dark">Subject Categories</h5>
+              <div class="input-group" style="max-width: 300px;">
+                <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                <input type="text" id="adminCategorySearch" class="form-control border-start-0" placeholder="Search categories...">
+              </div>
+            </div>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table align-middle">
+                <thead>
+                  <tr>
+                    <th>Icon</th>
+                    <th>Category Name</th>
+                    <th>Description</th>
+                    <th>Difficulty</th>
+                    <th class="text-center">Questions</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th class="text-end">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="adminCategoriesTbody">
+                  <tr>
+                    <td colspan="8" class="text-center py-5 text-muted">
+                      <div class="spinner-border spinner-border-sm text-primary me-2"></div> Loading categories...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Add/Edit Category Modal -->
+  <div class="modal fade" id="categoryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-xl" style="border-radius: 20px;">
+        <div class="modal-header border-bottom">
+          <h5 class="modal-title fw-bold" id="categoryModalTitle">Add Quiz Category</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="categoryForm" novalidate>
+          <div class="modal-body py-4">
+            <input type="hidden" id="editCategoryId">
+
+            <div class="mb-3">
+              <label for="catNameInput" class="form-label">Category Name</label>
+              <input type="text" class="form-control" id="catNameInput" placeholder="e.g. Data Structures & Algorithms" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="catDescInput" class="form-label">Description</label>
+              <textarea class="form-control" id="catDescInput" rows="3" placeholder="Brief academic overview of topics covered..." required></textarea>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label for="catDiffSelect" class="form-label">Difficulty Level</label>
+                <select class="form-select" id="catDiffSelect">
+                  <option value="easy">Easy</option>
+                  <option value="medium" selected>Medium</option>
+                  <option value="hard">Hard</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="catIconSelect" class="form-label">Theme Icon</label>
+                <select class="form-select" id="catIconSelect">
+                  <option value="bi-journal-bookmark">Bookmark</option>
+                  <option value="bi-cpu">CPU / Hardware</option>
+                  <option value="bi-code-slash">Code Slash</option>
+                  <option value="bi-calculator">Calculator / Math</option>
+                  <option value="bi-globe-americas">Globe / GK</option>
+                  <option value="bi-radioactive">Science Atom</option>
+                  <option value="bi-robot">AI & Robotics</option>
+                  <option value="bi-hourglass-split">History Clock</option>
+                  <option value="bi-book-half">Language Book</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="catQuizCountInput" class="form-label">Questions Per Quiz (Random Sample)</label>
+              <input type="number" class="form-control" id="catQuizCountInput" min="1" max="100" value="5" required>
+              <div class="form-text text-muted">Number of questions randomly selected for each user quiz attempt.</div>
+            </div>
+
+            <div class="form-check form-switch mt-2">
+              <input class="form-check-input" type="checkbox" id="catStatusSwitch" checked>
+              <label class="form-check-label fw-semibold" for="catStatusSwitch">Category is Active (Visible to Students)</label>
+            </div>
+          </div>
+          <div class="modal-footer border-0 pt-0">
+            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="saveCategoryBtn">Save Category</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/navbar.js"></script>
+  <script src="/js/admin/admin-categories.js"></script>
+</body>
+</html>
